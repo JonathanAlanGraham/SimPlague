@@ -21,6 +21,7 @@ $(document).ready(function() {
     var minSize=4;
     var minSpeed=1;
     var maxSpeed=1;
+	var illnessLength = 100;
     var balls=[];
     var tempBall;
     var tempX;
@@ -142,7 +143,9 @@ $(document).ready(function() {
         for (var j = i + 1; j < balls.length; j += 1) {
           testBall = balls[j];
           if (hitTestCircle(ball, testBall)) {
-			if (testBall.colour == '#000000' || ball.colour == '#000000') {
+			if ( (testBall.colour == '#000000' && ball.colour == '#FFFFFF') ||
+				(ball.colour == '#000000' && testBall.colour == '#FFFFFF')
+				) {
 				testBall.colour = '#000000';
 				ball.colour = '#000000';
 			}
