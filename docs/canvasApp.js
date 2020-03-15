@@ -21,6 +21,9 @@ $(document).ready(function() {
     var minSize=4;
     var minSpeed=1;
     var maxSpeed=1;
+	var illColour = '#000000';
+	var naiveColour = '#FFFFFF';
+	var immuneColour = '#FF0000';
 	var illnessLength = 100;
     var balls=[];
     var tempBall;
@@ -47,7 +50,7 @@ $(document).ready(function() {
         tempVelocityX = Math.cos(tempRadians) * tempSpeed;
         tempVelocityY = Math.sin(tempRadians) * tempSpeed;
         //tempColour=get_random_colour();
-        tempColour = '#FFFFFF';
+        tempColour = naiveColour;
 		
         tempBall = {
           x: tempX, 
@@ -67,7 +70,7 @@ $(document).ready(function() {
       }
       balls.push(tempBall);
     }
-    balls[balls.length-1].colour = '#000000';
+    balls[balls.length-1].colour = illColour;
     // Drawing interval
     setInterval(drawScreen, 33);
     
@@ -104,10 +107,11 @@ $(document).ready(function() {
         ball.nextX = (ball.x += ball.velocityX);
         ball.nextY = (ball.y += ball.velocityY);
 		if ( ball.illness > 1 ) {
+			alert(ball.illness);
 			ball.illness -= 1;
 		} else if ( ball.illness == 1 ) {
 			ball.illness = 0;
-			ball.colour = "#FF0000";
+			ball.colour = immuneColour;
 		}
       }
     }
@@ -150,14 +154,14 @@ $(document).ready(function() {
         for (var j = i + 1; j < balls.length; j += 1) {
           testBall = balls[j];
           if (hitTestCircle(ball, testBall)) {
-			if (testBall.colour == '#000000' && ball.colour == '#FFFFFF') 
+			if (testBall.colour == illColour && ball.colour == naiveColour) 
 			{
-				ball.colour = '#000000';
+				ball.colour = illColour;
 				ball.illness = illnessLength;
 			}
-			if	(ball.colour == '#000000' && testBall.colour == '#FFFFFF')
+			if	(ball.colour == illColour && testBall.colour == naiveColour)
 			{
-				testBall.colour = '#000000';
+				testBall.colour = illColour
 				testBall.illness = illnessLength;
 			}
             collideBalls(ball, testBall);
