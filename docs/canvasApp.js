@@ -102,7 +102,7 @@ $(document).ready(function() {
     // Loops through all the balls in the balls array and updates the nextX and nextY properties
     // with current x and y velocities for each ball
     function update() {
-      for (var i = 0; i < balls.length-1; i += 1) {
+      for (var i = 0; i < balls.length; i += 1) {
         ball = balls[i];
         ball.nextX = (ball.x += ball.velocityX);
         ball.nextY = (ball.y += ball.velocityY);
