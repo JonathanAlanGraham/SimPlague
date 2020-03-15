@@ -71,6 +71,7 @@ $(document).ready(function() {
       balls.push(tempBall);
     }
     balls[balls.length-1].colour = illColour;
+	balls[balls.length-1].illness = illnessLength;
     // Drawing interval
     setInterval(drawScreen, 33);
     
