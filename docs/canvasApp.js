@@ -107,7 +107,7 @@ $(document).ready(function() {
 			ball.illness -= 1;
 		} else if ( ball.illness == 1 ) {
 			ball.illness = 0;
-			ball.color = "#FF0000";
+			ball.colour = "#FF0000";
 		}
       }
     }
