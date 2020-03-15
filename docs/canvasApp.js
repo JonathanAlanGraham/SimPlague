@@ -17,13 +17,13 @@ $(document).ready(function() {
     
     // Variables
     var numBalls=200;
-    var maxSize=4;
-    var minSize=4;
-    var minSpeed=1;
-    var maxSpeed=1;
-	var illColour = '#000000';
-	var naiveColour = '#FFFFFF';
-	var immuneColour = '#FF0000';
+    var maxSize=5;
+    var minSize=5;
+    var minSpeed=2;
+    var maxSpeed=2;
+	var illColour = '#e74c3c';
+	var naiveColour = '#f1c40f';
+	var immuneColour = '#3498db';
 	var illnessLength = 100;
     var balls=[];
     var tempBall;
