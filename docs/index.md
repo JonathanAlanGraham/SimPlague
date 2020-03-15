@@ -1,1 +1,15 @@
-<html><b>tesT</b></html>
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>SimPlague</title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script src="modernizr-2.5.3.js"></script>
+	<script src="canvasApp.js"></script>
+</head>
+<body>
+	<canvas id="canvasOne" width="500" height="300">
+		You need a browser that supports HTML5 and Canvas for this to work.
+	</canvas>
+</body>
+</html>
