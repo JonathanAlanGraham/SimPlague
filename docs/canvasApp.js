@@ -19,8 +19,8 @@ $(document).ready(function() {
     var numBalls=200;
     var maxSize=4;
     var minSize=4;
-    var minSpeed=5;
-    var maxSpeed=5;
+    var minSpeed=2;
+    var maxSpeed=2;
     var balls=[];
     var tempBall;
     var tempX;
