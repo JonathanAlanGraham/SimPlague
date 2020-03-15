@@ -103,6 +103,12 @@ $(document).ready(function() {
         ball = balls[i];
         ball.nextX = (ball.x += ball.velocityX);
         ball.nextY = (ball.y += ball.velocityY);
+		if ( ball.illness > 1 ) {
+			ball.illness -= 1;
+		} else if ( ball.illness == 1 ) {
+			ball.illness = 0;
+			ball.color = "#FF0000";
+		}
       }
     }
     
@@ -144,13 +150,15 @@ $(document).ready(function() {
         for (var j = i + 1; j < balls.length; j += 1) {
           testBall = balls[j];
           if (hitTestCircle(ball, testBall)) {
-			if ( (testBall.colour == '#000000' && ball.colour == '#FFFFFF') 
+			if (testBall.colour == '#000000' && ball.colour == '#FFFFFF') 
 			{
 				ball.colour = '#000000';
+				ball.illness = illnessLength;
 			}
 			if	(ball.colour == '#000000' && testBall.colour == '#FFFFFF')
 			{
 				testBall.colour = '#000000';
+				testBall.illness = illnessLength;
 			}
             collideBalls(ball, testBall);
           }
