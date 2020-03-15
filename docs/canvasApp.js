@@ -60,7 +60,8 @@ $(document).ready(function() {
           velocityX: tempVelocityX,
           velocityY: tempVelocityY,
           mass: tempRadius,
-          colour: tempColour
+          colour: tempColour,
+		  illness: 0
         };
         placeOK = canStartHere(tempBall);
       }
@@ -143,11 +144,13 @@ $(document).ready(function() {
         for (var j = i + 1; j < balls.length; j += 1) {
           testBall = balls[j];
           if (hitTestCircle(ball, testBall)) {
-			if ( (testBall.colour == '#000000' && ball.colour == '#FFFFFF') ||
-				(ball.colour == '#000000' && testBall.colour == '#FFFFFF')
-				) {
-				testBall.colour = '#000000';
+			if ( (testBall.colour == '#000000' && ball.colour == '#FFFFFF') 
+			{
 				ball.colour = '#000000';
+			}
+			if	(ball.colour == '#000000' && testBall.colour == '#FFFFFF')
+			{
+				testBall.colour = '#000000';
 			}
             collideBalls(ball, testBall);
           }
