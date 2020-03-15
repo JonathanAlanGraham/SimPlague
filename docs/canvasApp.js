@@ -17,10 +17,14 @@ $(document).ready(function() {
     
     // Variables
     var numBalls=200;
+	var totalIll = 1;
+	var totalNaive = numBalls;
+	var totalImmune = 0;
     var maxSize=5;
     var minSize=5;
     var minSpeed=2;
     var maxSpeed=2;
+	var marginSize=200;
 	var illColour = '#e74c3c';
 	var naiveColour = '#f1c40f';
 	var immuneColour = '#3498db';
@@ -103,6 +107,9 @@ $(document).ready(function() {
     // Loops through all the balls in the balls array and updates the nextX and nextY properties
     // with current x and y velocities for each ball
     function update() {
+	  totalIll = 0;
+	  totalImmune = 0;
+	  totalNaive = 0;
       for (var i = 0; i < balls.length; i += 1) {
         ball = balls[i];
         ball.nextX = (ball.x += ball.velocityX);
@@ -112,6 +119,15 @@ $(document).ready(function() {
 		} else if ( ball.illness == 1 ) {
 			ball.illness = 0;
 			ball.colour = immuneColour;
+		}
+		if (ball.colour == illColour) {
+			totalIll += 1;
+		}
+		else if (ball.colour == immuneColour ) {
+		totalImmune += 1;
+		}
+		else if (ball.colour == naiveColour ) {
+			totalNaive += 1;
 		}
       }
     }
@@ -125,9 +141,9 @@ $(document).ready(function() {
       for (var i = 0; i < balls.length; i += 1) {
         ball = balls[i];
         
-        if (ball.nextX + ball.radius > theCanvas.width) { // right wall
+        if (ball.nextX + ball.radius > theCanvas.width - marginSize) { // right wall
           ball.velocityX = ball.velocityX * (-1);
-          ball.nextX = theCanvas.width - ball.radius;
+          ball.nextX = theCanvas.width -marginSize - ball.radius;
           
         } else if (ball.nextX - ball.radius < 0) { // top wall
           ball.velocityX = ball.velocityX * (-1);
@@ -241,9 +257,33 @@ $(document).ready(function() {
       
       // Outside border
       context.strokeStyle = "#000000";
-      context.strokeRect(1, 1, theCanvas.width - 2, theCanvas.height - 2);
-    
-      update();
+      context.strokeRect(1, 1, theCanvas.width - marginSize, theCanvas.height - 2);
+	  context.fillStyle = "#000000";
+	  context.font = "30px Arial";
+	  context.fillText("SimPlague",theCanvas.width - marginSize + 10,35);
+	  context.font = "20px Arial";
+	  context.fillText("Infected:",theCanvas.width - marginSize + 20,65);
+	  context.fillText(totalIll.toString(),theCanvas.width - marginSize + 140,65);
+	  context.fillText("Naive:",theCanvas.width - marginSize + 20,85);
+	  context.fillText(totalNaive.toString(),theCanvas.width - marginSize + 140,85);
+	  context.fillText("Recovered:",theCanvas.width - marginSize + 20,105);
+	  context.fillText(totalImmune.toString(),theCanvas.width - marginSize + 140,105);
+      context.fillStyle = illColour;
+      context.beginPath();
+      context.arc(theCanvas.width - marginSize+10, 59, maxSize, 0, Math.PI *2, true);
+      context.closePath();
+      context.fill();
+	  context.fillStyle = naiveColour;
+      context.beginPath();
+      context.arc(theCanvas.width - marginSize+10, 79, maxSize, 0, Math.PI *2, true);
+      context.closePath();
+      context.fill();
+	  context.fillStyle = immuneColour;
+      context.beginPath();
+      context.arc(theCanvas.width - marginSize+10, 99, maxSize, 0, Math.PI *2, true);
+      context.closePath();
+      context.fill();
+	  update();
       testWalls();
       collide();
       render();
