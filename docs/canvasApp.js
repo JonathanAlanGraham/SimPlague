@@ -16,10 +16,17 @@ $(document).ready(function() {
     }
     
     // Variables
+	var collisions = 0;
+	var collisionsPerDay = 0;
+	var totalDays = 0;
+	var cyclesPerDay = 10;
+	var mortalityRate = 0.02;
+	var cycles = 0;
     var numBalls=200;
 	var totalIll = 1;
 	var totalNaive = numBalls;
 	var totalImmune = 0;
+	var totalDeaths = 0;
     var maxSize=5;
     var minSize=5;
     var minSpeed=2;
@@ -28,7 +35,11 @@ $(document).ready(function() {
 	var illColour = '#e74c3c';
 	var naiveColour = '#f1c40f';
 	var immuneColour = '#3498db';
-	var illnessLength = 100;
+	var deadColour = '#000000';
+	var text1Colour = '#2ecc71';
+	var text2Colour = '#d35400';
+	var illnessLength = cyclesPerDay * 16;
+	var textLeftMargin = theCanvas.width - marginSize;
     var balls=[];
     var tempBall;
     var tempX;
@@ -46,7 +57,7 @@ $(document).ready(function() {
       tempRadius = getRandomInt(minSize, maxSize);
       var placeOK = false;
       while (!placeOK) {
-        tempX = tempRadius * 3 + (Math.floor(Math.random() * theCanvas.width) - tempRadius * 3);
+        tempX = tempRadius * 3 + (Math.floor(Math.random() * textLeftMargin) - tempRadius * 3);
         tempY = tempRadius * 3 + (Math.floor(Math.random() * theCanvas.height) - tempRadius * 3);
         tempSpeed = getRandomInt(minSpeed, maxSpeed);
         tempAngle = Math.floor(Math.random() * 360);
@@ -110,6 +121,7 @@ $(document).ready(function() {
 	  totalIll = 0;
 	  totalImmune = 0;
 	  totalNaive = 0;
+	  totalDeaths = 0;
       for (var i = 0; i < balls.length; i += 1) {
         ball = balls[i];
         ball.nextX = (ball.x += ball.velocityX);
@@ -118,7 +130,11 @@ $(document).ready(function() {
 			ball.illness -= 1;
 		} else if ( ball.illness == 1 ) {
 			ball.illness = 0;
-			ball.colour = immuneColour;
+			if (Math.random() < 0.2 ) {
+				ball.colour = deadColour;
+			} else {
+				ball.colour = immuneColour;
+			}
 		}
 		if (ball.colour == illColour) {
 			totalIll += 1;
@@ -129,7 +145,15 @@ $(document).ready(function() {
 		else if (ball.colour == naiveColour ) {
 			totalNaive += 1;
 		}
+		else if (ball.colour == deadColour ) {
+			totalDeaths +=1 ;
+		}
       }
+	  cycles += 1;
+	  if ( totalIll > 0 && cycles >= cyclesPerDay ) {
+		  totalDays += 1;
+		  collisionsPerDay = collisions/totalDays;
+	  }
     }
     
     // We track balls by their center, so we test for all collision by adding or subtracting
@@ -141,9 +165,9 @@ $(document).ready(function() {
       for (var i = 0; i < balls.length; i += 1) {
         ball = balls[i];
         
-        if (ball.nextX + ball.radius > theCanvas.width - marginSize) { // right wall
+        if (ball.nextX + ball.radius > textLeftMargin) { // right wall
           ball.velocityX = ball.velocityX * (-1);
-          ball.nextX = theCanvas.width -marginSize - ball.radius;
+          ball.nextX = textLeftMargin - ball.radius;
           
         } else if (ball.nextX - ball.radius < 0) { // top wall
           ball.velocityX = ball.velocityX * (-1);
@@ -169,7 +193,10 @@ $(document).ready(function() {
         ball = balls[i];
         for (var j = i + 1; j < balls.length; j += 1) {
           testBall = balls[j];
-          if (hitTestCircle(ball, testBall)) {
+          if (hitTestCircle(ball, testBall) && ball.colour != deadColour && testBall.colour != deadColour ) {
+			if ( totalIll > 0 ) {
+				collisions +=1;
+				}
 			if (testBall.colour == illColour && ball.colour == naiveColour) 
 			{
 				ball.colour = illColour;
@@ -241,11 +268,23 @@ $(document).ready(function() {
         context.fillStyle = ball.colour;
         ball.x = ball.nextX;
         ball.y = ball.nextY;
-        
-        context.beginPath();
-        context.arc(ball.x, ball.y, ball.radius, 0, Math.PI *2, true);
-        context.closePath();
-        context.fill();
+        if (ball.colour != deadColour ) {
+			context.beginPath();
+			context.arc(ball.x, ball.y, ball.radius, 0, Math.PI *2, true);
+			context.closePath();
+			context.fill();
+		} else {
+			context.beginPath();
+			context.lineWidth = 2;
+			context.moveTo(ball.x - 5, ball.y - 5);
+			context.lineTo(ball.x + 5, ball.y + 5);	
+			context.moveTo(ball.x + 5, ball.y - 5);
+			context.lineTo(ball.x - 5, ball.y + 5);
+			context.stroke();
+			ball.velocityX = 0;
+			ball.velocityY = 0;
+			context.lineWidth = 1;
+		}
       }
     }
     
@@ -257,32 +296,54 @@ $(document).ready(function() {
       
       // Outside border
       context.strokeStyle = "#000000";
-      context.strokeRect(1, 1, theCanvas.width - marginSize, theCanvas.height - 2);
+      context.strokeRect(1, 1, textLeftMargin, theCanvas.height - 2);
 	  context.fillStyle = "#000000";
 	  context.font = "30px Arial";
-	  context.fillText("SimPlague",theCanvas.width - marginSize + 10,35);
+	  context.fillText("SimPlague",textLeftMargin + 10,35);
 	  context.font = "20px Arial";
-	  context.fillText("Infected:",theCanvas.width - marginSize + 20,65);
-	  context.fillText(totalIll.toString(),theCanvas.width - marginSize + 140,65);
-	  context.fillText("Naive:",theCanvas.width - marginSize + 20,85);
-	  context.fillText(totalNaive.toString(),theCanvas.width - marginSize + 140,85);
-	  context.fillText("Recovered:",theCanvas.width - marginSize + 20,105);
-	  context.fillText(totalImmune.toString(),theCanvas.width - marginSize + 140,105);
+	  context.fillText("Infected:",textLeftMargin + 20,65);
+	  context.fillText(totalIll.toString(),textLeftMargin + 140,65);
+	  context.fillText("Naive:",textLeftMargin + 20,85);
+	  context.fillText(totalNaive.toString(),textLeftMargin + 140,85);
+	  context.fillText("Recovered:",textLeftMargin + 20,105);
+	  context.fillText(totalImmune.toString(),textLeftMargin + 140,105);
+	  context.fillText("Dead:",textLeftMargin + 20,125);
+	  context.fillText(totalDeaths.toString(),textLeftMargin + 140,125);
       context.fillStyle = illColour;
       context.beginPath();
-      context.arc(theCanvas.width - marginSize+10, 59, maxSize, 0, Math.PI *2, true);
+      context.arc(textLeftMargin+10, 59, maxSize, 0, Math.PI *2, true);
       context.closePath();
       context.fill();
 	  context.fillStyle = naiveColour;
       context.beginPath();
-      context.arc(theCanvas.width - marginSize+10, 79, maxSize, 0, Math.PI *2, true);
+      context.arc(textLeftMargin+10, 79, maxSize, 0, Math.PI *2, true);
       context.closePath();
       context.fill();
 	  context.fillStyle = immuneColour;
       context.beginPath();
-      context.arc(theCanvas.width - marginSize+10, 99, maxSize, 0, Math.PI *2, true);
+      context.arc(textLeftMargin+10, 99, maxSize, 0, Math.PI *2, true);
       context.closePath();
       context.fill();
+	  context.beginPath();
+      context.lineWidth = 2;
+	  context.moveTo(textLeftMargin+5, 119 - 5);
+	  context.lineTo(textLeftMargin+15, 119 + 5);	
+	  context.moveTo(textLeftMargin+15, 119 - 5);
+	  context.lineTo(textLeftMargin+5, 119 + 5);
+	  context.stroke();
+	  context.lineWidth = 1;
+	  context.fillStyle = text1Colour;
+	  context.fillText("Days:",textLeftMargin + 20,165);
+	  context.fillText(totalDays.toString(),textLeftMargin + 100,165);
+	  context.fillStyle = illColour;
+	  context.fillText("CPD:",textLeftMargin + 20,185);
+	  context.fillText(collisionsPerDay.toFixed(2).	toString(),textLeftMargin + 100,185);
+	  context.fillStyle = text2Colour;
+	  context.fillText("Illness profile:",textLeftMargin+5,300);
+	  context.fillText("Duration (days):",textLeftMargin+10,320);
+	  context.fillText(illnessLength/cyclesPerDay.toString(),textLeftMargin+160,320);
+	  context.fillText("Mortality:",textLeftMargin+10,340);
+	  context.fillText((mortalityRate*100).toString()+"%",textLeftMargin+160,340);
 	  update();
       testWalls();
       collide();
