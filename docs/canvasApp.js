@@ -130,7 +130,7 @@ $(document).ready(function() {
 			ball.illness -= 1;
 		} else if ( ball.illness == 1 ) {
 			ball.illness = 0;
-			if (Math.random() < 0.2 ) {
+			if (Math.random() < mortalityRate ) {
 				ball.colour = deadColour;
 			} else {
 				ball.colour = immuneColour;
